@@ -17,7 +17,12 @@ function browserSyncPlugin(options){
             server     : "build",
             files      : ["src/**/*.md", "templates/**/*.hbs"]
         };
-        _.merge(bsOptions, options);
+        _.merge(bsOptions, options, function merger(a, b){
+            //Always use the array given if there is one
+            if(_.isArray(a)){
+                return b;
+            }
+        });
 
         //Require options that are non-negotiable
         bsOptions.middleware = function (req, res, next) {
