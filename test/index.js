@@ -1,6 +1,7 @@
 /**
  * Created by Mike Dvorscak on 4/11/15.
  */
+var Promise         = require('promise');
 var proxyquire      = require('proxyquire');
 var Metalsmith      = require('metalsmith');
 var bsCalledWith    = {};
@@ -12,19 +13,32 @@ var browserSyncMock = {
 var plugin          = proxyquire('../index.js', {'browser-sync' : browserSyncMock.browserSync});
 
 describe('metalsmith-browser-sync', function () {
-    it('should launch a static server', function (done) {
-        spyOn(browserSyncMock, 'browserSync');
-        Metalsmith(__dirname)
-            .use(plugin)
-            .build(function (err) {
-                       if (err) {
-                           console.error(err);
-                       }
-                       expect(browserSyncMock.browserSync).toHaveBeenCalled();
-                       expect(bsCalledWith.server).toBeDefined();
-                       done();
-                   });
+    var build;
 
+    function buildErrorHandler (err) {
+        expect('build').toBe('successful');
+        console.error(err);
+    }
+
+    beforeEach(function () {
+        build = new Promise(function (resolve, reject) {
+            Metalsmith('test')
+                .source('fixturesa')
+                .use(plugin())
+                .build(function (err) {
+                           if (err) {
+                               reject(err);
+                           }
+                           resolve();
+                       });
+        })
+    });
+    it('should launch a static server', function (done) {
+        function assertions () {
+            expect(bsCalledWith.server).toBeDefined();
+        }
+
+        build.then(assertions).catch(buildErrorHandler).then(done);
     });
 
     it('should allow me to specify the static folder that is served', function () {

@@ -28,6 +28,7 @@
     "gulp-istanbul": "^0.8.1",
     "gulp-jasmine": "^2.0.1",
     "metalsmith": "^1.5.0",
+    "promise": "^7.0.0",
     "proxyquire": "^1.4.0"
   },
   "dependencies": {
