@@ -43,6 +43,14 @@ describe('metalsmith-browser-sync', function () {
         build(plugin()).then(assertions).catch(buildErrorHandler).then(done);
     });
 
+    it('should use the build directory by default', function(done){
+        function assertions () {
+            expect(bsCalledWith.server).toBe('build');
+        }
+
+        build(plugin()).then(assertions).catch(buildErrorHandler).then(done);
+    });
+
     it('should allow me to specify the static folder that is served', function (done) {
         function assertions () {
             expect(bsCalledWith.server).toBe('test');
