@@ -21,24 +21,26 @@ describe('metalsmith-browser-sync', function () {
     }
 
     beforeEach(function () {
-        build = new Promise(function (resolve, reject) {
-            Metalsmith('test')
-                .source('fixturesa')
-                .use(plugin())
-                .build(function (err) {
-                           if (err) {
-                               reject(err);
-                           }
-                           resolve();
-                       });
-        })
+        build = function builder(plugin){
+            return new Promise(function (resolve, reject) {
+                Metalsmith('test')
+                    .source('fixtures')
+                    .use(plugin)
+                    .build(function (err) {
+                               if (err) {
+                                   reject(err);
+                               }
+                               resolve();
+                           });
+            });
+        };
     });
     it('should launch a static server', function (done) {
         function assertions () {
             expect(bsCalledWith.server).toBeDefined();
         }
 
-        build.then(assertions).catch(buildErrorHandler).then(done);
+        build(plugin()).then(assertions).catch(buildErrorHandler).then(done);
     });
 
     it('should allow me to specify the static folder that is served', function () {
