@@ -43,8 +43,12 @@ describe('metalsmith-browser-sync', function () {
         build(plugin()).then(assertions).catch(buildErrorHandler).then(done);
     });
 
-    it('should allow me to specify the static folder that is served', function () {
+    it('should allow me to specify the static folder that is served', function (done) {
+        function assertions () {
+            expect(bsCalledWith.server).toBe('test');
+        }
 
+        build(plugin({server:'test'})).then(assertions).catch(buildErrorHandler).then(done);
     });
 
     it('rebuild when a watched file changes', function () {

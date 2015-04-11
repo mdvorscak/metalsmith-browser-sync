@@ -1,5 +1,5 @@
-var gulp = require('gulp');
-var jasmine = require('gulp-jasmine');
+var gulp     = require('gulp');
+var jasmine  = require('gulp-jasmine');
 var istanbul = require('gulp-istanbul');
 
 gulp.task('test', function (done) {
@@ -9,13 +9,16 @@ gulp.task('test', function (done) {
         .on('finish', function () {
                 gulp.src('test/*.js')
                     .pipe(jasmine())
+                    .on('error', function (err) {
+                            this.emit('end');
+                        })
                     .pipe(istanbul.writeReports({
-                              dir: './coverage'
+                              dir : './coverage'
                           }))
                     .on('end', done);
             });
 });
 
-gulp.task('tdd', function(){
-   gulp.watch(['index.js', 'test/*.js'], ['test']);
+gulp.task('tdd', function () {
+    gulp.watch(['index.js', 'test/*.js'], ['test']);
 });
