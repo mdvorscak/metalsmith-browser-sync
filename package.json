@@ -4,7 +4,8 @@
   "description": "A Metalsmith plugin to make your workflow easier",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
     "gulp-jasmine": "^2.0.1",
     "metalsmith": "^1.5.0",
     "promise": "^7.0.0",
-    "proxyquire": "^1.4.0"
+    "proxyquire": "^1.4.0",
+    "coveralls": "^2.11.2"
   },
   "dependencies": {
     "browser-sync": "^2.5.3",
