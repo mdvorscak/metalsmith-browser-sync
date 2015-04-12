@@ -1,7 +1,7 @@
 # metalsmith-browser-sync
 A [Metalsmith](https://github.com/segmentio/metalsmith) plugin to make your workflow easier (using [BrowserSync](https://github.com/BrowserSync/browser-sync)).
 
-[![Build Status][travis-image]][travis-url] [![Coveralls Status][coveralls-image]][coveralls-url]
+[![Build Status][travis-image]][travis-url]
 
 ## Installation
 
@@ -36,6 +36,3 @@ MIT - [view the full license here] (LICENSE)
 
 [travis-url]: https://travis-ci.org/mdvorscak/metalsmith-browser-sync
 [travis-image]: https://travis-ci.org/mdvorscak/metalsmith-browser-sync.svg?branch=master
-
-[coveralls-url]: https://coveralls.io/r/mdvorscak/metalsmith-browser-sync
-[coveralls-image]: https://coveralls.io/repos/mdvorscak/metalsmith-browser-sync/badge.svg
