@@ -4,13 +4,16 @@
 var Promise         = require('promise');
 var proxyquire      = require('proxyquire');
 var Metalsmith      = require('metalsmith');
+
+// Mocks
 var bsCalledWith    = {};
+var bsCalls = 0;
 var browserSyncMock = {
     browserSync : function (options) {
+        bsCalls++;
         bsCalledWith = options;
     }
 };
-
 var debugMessage;
 var debugMock = {
     debug : function (namespace) {
@@ -19,6 +22,7 @@ var debugMock = {
         };
     }
 };
+
 var plugin    = proxyquire('../index.js', {
     'browser-sync' : browserSyncMock.browserSync,
     'debug'        : debugMock.debug
@@ -26,7 +30,6 @@ var plugin    = proxyquire('../index.js', {
 
 describe('metalsmith-browser-sync', function () {
     var build;
-    var metalsmith;
 
     function buildErrorHandler (err) {
         expect('build').toBe('successful');
@@ -37,7 +40,7 @@ describe('metalsmith-browser-sync', function () {
         debugMessage = '';
         build = function builder (plugin) {
             return new Promise(function (resolve, reject) {
-                metalsmith = Metalsmith('test')
+                Metalsmith('test')
                     .source('fixtures')
                     .use(plugin)
                     .build(function (err) {
@@ -91,13 +94,39 @@ describe('metalsmith-browser-sync', function () {
         });
     });
 
-    it('should not effect other plugins', function(){
+    it('should not effect other plugins', function(done){
+        var foo;
+        var plugin2 = function(){
+            return function setFoo(){
+                foo = true;
+            };
+        };
+        var build2 = function builder2 (plugin) {
+            return new Promise(function (resolve, reject) {
+                Metalsmith('test')
+                    .source('fixtures')
+                    .use(plugin2())
+                    .use(plugin)
+                    .build(function (err) {
+                               if (err) {
+                                   reject(err);
+                               }
+                               resolve();
+                           });
+            });
+        };
 
+        function assertions () {
+            expect(foo).toBe(true);
+        }
+
+        build2(plugin()).then(assertions).catch(buildErrorHandler).then(done);
     });
 
     describe('metalsmith mock tests', function(){
         var rawPlugin, metalsmithMock;
         beforeEach(function(){
+            bsCalls = 0;
             rawPlugin = plugin();
             metalsmithMock = {
                 build : function(callback){
@@ -107,7 +136,6 @@ describe('metalsmith-browser-sync', function () {
             };
         });
         it('should not attempt to launch multiple browser-sync servers (after each file change)', function (done) {
-            spyOn(browserSyncMock, 'browserSync').and.callThrough();
             spyOn(metalsmithMock, 'build').and.callThrough();
 
             var callCount = 0;
@@ -119,7 +147,7 @@ describe('metalsmith-browser-sync', function () {
 
             function assertions () {
                 expect(metalsmithMock.build.calls.count()).toBe(2);
-                expect(browserSyncMock.browserSync.calls.count()).toBe(1);
+                expect(bsCalls).toBe(1);
                 done();
             }
             rawPlugin(null, metalsmithMock, simulateFileChange);
