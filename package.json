@@ -12,7 +12,12 @@
   },
   "keywords": [
     "metalsmith",
-    "browser-sync"
+    "metalsmith plugin",
+    "metalsmith browser sync plugin",
+    "metalsmith-browser-sync",
+    "metalsmith-browser-sync plugin",
+    "browser-sync",
+    "browser sync"
   ],
   "author": "Mike Dvorscak",
   "license": {
