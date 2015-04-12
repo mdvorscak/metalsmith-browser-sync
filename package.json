@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "gulp test",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "coveralls": "istanbul cover jasmine-node --captureExceptions --include-all-sources test/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -25,13 +25,15 @@
   },
   "homepage": "https://github.com/mdvorscak/metalsmith-browser-sync",
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "gulp": "^3.8.11",
     "gulp-istanbul": "^0.8.1",
     "gulp-jasmine": "^2.0.1",
+    "istanbul": "^0.3.13",
+    "jasmine-node": "^1.14.5",
     "metalsmith": "^1.5.0",
     "promise": "^7.0.0",
-    "proxyquire": "^1.4.0",
-    "coveralls": "^2.11.2"
+    "proxyquire": "^1.4.0"
   },
   "dependencies": {
     "browser-sync": "^2.5.3",
