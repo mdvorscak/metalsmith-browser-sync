@@ -11,7 +11,7 @@ errorHandler.bind(gulp);
 gulp.task('test', function (done) {
     gulp.src('index.js')
         .pipe(istanbul())
-        //.pipe(istanbul.hookRequire())
+        .pipe(istanbul.hookRequire())
         .on('finish', function () {
                 gulp.src('test/*.js')
                     .pipe(jasmine())
