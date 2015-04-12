@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "gulp test",
-    "coveralls": "istanbul cover jasmine-node --captureExceptions --include-all-sources test/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "coveralls": "istanbul cover jasmine-node -- --matchall test/*.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "gulp-istanbul": "^0.8.1",
     "gulp-jasmine": "^2.0.1",
     "istanbul": "^0.3.13",
-    "jasmine-node": "^1.14.5",
+    "jasmine-node": "^2.0.0",
     "metalsmith": "^1.5.0",
     "promise": "^7.0.0",
     "proxyquire": "^1.4.0"
