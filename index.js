@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var browserSync = require('browser-sync');
+var bs = require('browser-sync').create();
 var debug = require('debug')('metalsmith-browser-sync');
 
 var PLUGIN_NAME = 'browser-sync';
@@ -24,15 +24,26 @@ function browserSyncPlugin(options){
             }
         });
 
-        //Require options that are non-negotiable
-        bsOptions.middleware = function (req, res, next) {
-            metalsmith.build(function (err) {
-                var buildMessage = err ? err : 'Build successful';
-                debug(buildMessage);
-                next();
-            });
+        function rebuild() {
+            if (!bs.paused) {
+                bs.pause();
+
+                metalsmith.build(function(err) {
+                    var buildMessage = err ? err : 'Build successful';
+                    debug(buildMessage);
+
+                    bs.resume();
+                    bs.reload();
+                });
+            }
         };
-        browserSync(bsOptions);
+
+        var watched = bsOptions.files;
+        delete bsOptions.files;
+
+        bs.watch(watched, { ignoreInitial: true }).on('all', rebuild);
+        bs.init(bsOptions);
+
         done();
     }
     plugin._pluginName = PLUGIN_NAME;

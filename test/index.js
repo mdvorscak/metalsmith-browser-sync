@@ -7,11 +7,51 @@ var Metalsmith      = require('metalsmith');
 
 // Mocks
 var bsCalledWith    = {};
+var bsWatching;
 var bsCalls = 0;
+var bsReloadCount = 0;
+var bsPaused = false;
+var rebuild;
+
 var browserSyncMock = {
-    browserSync : function (options) {
-        bsCalls++;
-        bsCalledWith = options;
+    browserSync : {
+        create: function () {
+            var bs = {
+
+                paused: false,
+
+                watch: function(files, opts){
+                    bsWatching = files;
+
+                    return {
+                        on: function(name, cb) {
+                          if ('all' === name) {
+                            rebuild = cb;
+                          }
+                        }
+                    };
+                },
+
+                init: function(options) {
+                    bsCalls++;
+                    bsCalledWith = options;
+                },
+
+                pause: function() {
+                  bs.paused = bsPaused = true;
+                },
+
+                resume: function() {
+                  bs.paused = bsPaused = false;
+                },
+
+                reload: function() {
+                  bsReloadCount++;
+                }
+            };
+
+            return bs;
+        }
     }
 };
 var debugMessage;
@@ -79,7 +119,7 @@ describe('metalsmith-browser-sync', function () {
 
         it('should use default watched files, if no files are provided', function (done) {
             function assertions () {
-                expect(bsCalledWith.files).toEqual(["src/**/*.md", "templates/**/*.hbs"]);
+                expect(bsWatching).toEqual(["src/**/*.md", "templates/**/*.hbs"]);
             }
 
             build(plugin()).then(assertions).catch(buildErrorHandler).then(done);
@@ -87,7 +127,7 @@ describe('metalsmith-browser-sync', function () {
 
         it('should allow me to specify the watched files', function (done) {
             function assertions () {
-                expect(bsCalledWith.files).toEqual(['test/*.test']);
+                expect(bsWatching).toEqual(['test/*.test']);
             }
 
             build(plugin({files : ['test/*.test']})).then(assertions).catch(buildErrorHandler).then(done);
@@ -127,10 +167,14 @@ describe('metalsmith-browser-sync', function () {
         var rawPlugin, metalsmithMock;
         beforeEach(function(){
             bsCalls = 0;
+            bsReloadCount = 0;
             rawPlugin = plugin();
             metalsmithMock = {
                 build : function(callback){
+                    expect(bsPaused).toBe(true);
                     callback();
+                    expect(bsPaused).toBe(false);
+                    expect(bsReloadCount).toBeGreaterThan(0);
                 },
                 plugins : []
             };
@@ -138,15 +182,11 @@ describe('metalsmith-browser-sync', function () {
         it('should not attempt to launch multiple browser-sync servers (after each file change)', function (done) {
             spyOn(metalsmithMock, 'build').and.callThrough();
 
-            var callCount = 0;
             function simulateFileChange () {
-                callCount++;
-                var fnToCall = callCount > 1 ? assertions : simulateFileChange;
-                bsCalledWith.middleware(null, null, fnToCall);
-            }
-
-            function assertions () {
+                rebuild();
+                rebuild();
                 expect(metalsmithMock.build.calls.count()).toBe(2);
+                expect(bsReloadCount).toBe(2);
                 expect(bsCalls).toBe(1);
                 done();
             }
@@ -158,12 +198,10 @@ describe('metalsmith-browser-sync', function () {
             spyOn(metalsmithMock, 'build').and.callThrough();
 
             function simulateFileChange () {
-                bsCalledWith.middleware(null, null, assertions);
-            }
-
-            function assertions () {
+                rebuild();
                 expect(debugMessage).toBe('Build successful');
                 expect(metalsmithMock.build.calls.count()).toBe(1);
+                expect(bsReloadCount).toBe(1);
                 done();
             }
             rawPlugin(null, metalsmithMock, simulateFileChange);
@@ -172,10 +210,7 @@ describe('metalsmith-browser-sync', function () {
         describe('debug messages', function(){
             it('should be successful if there were no issues', function(done){
                 function simulateFileChange () {
-                    bsCalledWith.middleware(null, null, assertions);
-                }
-
-                function assertions () {
+                    rebuild();
                     expect(debugMessage).toBe('Build successful');
                     done();
                 }
@@ -187,10 +222,7 @@ describe('metalsmith-browser-sync', function () {
                     callback('test error');
                 };
                 function simulateFileChange () {
-                    bsCalledWith.middleware(null, null, assertions);
-                }
-
-                function assertions () {
+                    rebuild();
                     expect(debugMessage).toBe('test error');
                     done();
                 }
