@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-browser-sync",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Metalsmith plugin to make your workflow easier",
   "main": "index.js",
   "scripts": {
