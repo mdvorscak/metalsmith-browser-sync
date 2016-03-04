@@ -42,7 +42,7 @@ function browserSyncPlugin(options, callback){
         delete bsOptions.files;
 
         bs.watch(watched, { ignoreInitial: true }).on('all', rebuild);
-        bs.init(bsOptions, callback);
+        bs.init(bsOptions, callback || _.noop);
 
         done();
     }
