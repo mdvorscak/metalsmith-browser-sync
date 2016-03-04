@@ -31,6 +31,22 @@ var defaultOpts = {
 
 Note: you can pass any options you could normally pass to [BrowserSync](https://github.com/BrowserSync/browser-sync)
 
+### Callback 
+
+You can also pass a callback function, which is called when BrowserSync has completed all setup tasks and is ready to use.
+This is useful when you need to wait for information (for example: urls, port etc) or perform other tasks synchronously.
+
+```js
+var browserSync = require('metalsmith-browser-sync');
+
+metalsmith.use(browserSync({
+                    server : "myBuildDirectory",
+                    files  : ["src/**/*.md", "templates/**/*.hbs"]
+              }, function (err, bs) {
+                  // do some stuff here
+              }));
+```
+
 ## License
 MIT - [view the full license here] (LICENSE)
 
