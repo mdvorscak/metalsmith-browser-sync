@@ -9,6 +9,7 @@ var Metalsmith      = require('metalsmith');
 var bsCalledWith    = {};
 var bsWatching;
 var bsCalls = 0;
+var bsCallbackInstance = undefined;
 var bsReloadCount = 0;
 var bsPaused = false;
 var rebuild;
@@ -32,9 +33,13 @@ var browserSyncMock = {
                     };
                 },
 
-                init: function(options) {
+                init: function(options, cb) {
                     bsCalls++;
                     bsCalledWith = options;
+
+                    if (cb) {
+                        cb(null, {});
+                    }
                 },
 
                 pause: function() {
@@ -134,6 +139,18 @@ describe('metalsmith-browser-sync', function () {
         });
     });
 
+    describe('callback', function () {
+        it('should return the browserSync instance', function (done) {
+            function assertions () {
+                expect(bsCallbackInstance).toEqual(jasmine.any(Object));
+            }
+
+            build(plugin({}, function (err, bs) {
+                bsCallbackInstance = bs;
+            })).then(assertions).catch(buildErrorHandler).then(done);
+        });
+    });
+
     it('should not effect other plugins', function(done){
         var foo;
         var plugin2 = function(){
@@ -167,6 +184,7 @@ describe('metalsmith-browser-sync', function () {
         var rawPlugin, metalsmithMock;
         beforeEach(function(){
             bsCalls = 0;
+            bsCallbackInstance = undefined;
             bsReloadCount = 0;
             rawPlugin = plugin();
             metalsmithMock = {

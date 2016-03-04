@@ -14,7 +14,9 @@ gulp.task('test', function (done) {
         .pipe(istanbul.hookRequire())
         .on('finish', function () {
                 gulp.src('test/*.js')
-                    .pipe(jasmine())
+                    .pipe(jasmine({
+                        verbose: true
+                    }))
                     .on('error', errorHandler)
                     .pipe(istanbul.writeReports({
                               dir : './coverage'
