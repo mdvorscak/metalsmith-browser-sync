@@ -48,7 +48,7 @@ metalsmith.use(browserSync({
 ```
 
 ## License
-MIT - [view the full license here] (LICENSE)
+MIT - [view the full license here](LICENSE)
 
 [travis-url]: https://travis-ci.org/mdvorscak/metalsmith-browser-sync
 [travis-image]: https://travis-ci.org/mdvorscak/metalsmith-browser-sync.svg?branch=master
