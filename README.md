@@ -9,7 +9,7 @@ A [Metalsmith](https://github.com/segmentio/metalsmith) plugin to make your work
 
 ## Example
 
-  Pass `options` to the BrowserSync plugin and pass it to Metalsmith with the `use` method:
+Pass `options` to the BrowserSync plugin and pass it to Metalsmith with the `use` method:
 
 ```js
 var browserSync = require('metalsmith-browser-sync');
@@ -29,7 +29,13 @@ var defaultOpts = {
 }
 ```
 
-Note: you can pass any options you could normally pass to [BrowserSync](https://github.com/BrowserSync/browser-sync)
+## Options
+
+You can pass any options you could normally pass to [BrowserSync](https://github.com/BrowserSync/browser-sync)
+
+### Files
+
+The files option represents the pattern option of [BrowserSync.watch()](https://browsersync.io/docs/api#api-watch).
 
 ### Callback 
 
